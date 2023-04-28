@@ -1,12 +1,12 @@
-import tkinter as tk
+##import tkinter as tk
 
-root=tk.Tk()
+##root=tk.Tk()
 
-root.geometry("800x500")
-root.title("Banking System")
+##root.geometry("800x500")
+##root.title("Banking System")
 
-lable=tk.Lable(root, text="Bank", font='Arial')
-lable.pack()
-root.mainloop()
+##lable=root.Lable(root, text="Bank")
+##lable.pack(padx=20, pady=20)
+##root.mainloop()
 
 

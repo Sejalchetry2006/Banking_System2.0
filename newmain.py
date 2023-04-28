@@ -1,7 +1,7 @@
 import mysql.connector
 import random
-from Bank_functions import BankFunctions
-conn= mysql.connector.connect(user = "root", database = "Bank_system", password = "Hello1234")
+##from Bank_functions import BankFunctions
+conn= mysql.connector.connect(user = "root", database = "Bank_Data", password = "Hello1234")
 cursor=conn.cursor()
 def create_account():
     print("1. Checking account")
@@ -29,7 +29,7 @@ def create_account():
                 print("Invalid account type")
                 create_account()
             
-        addintobank='INSERT INTO Bank_system.CreatingAcc(name, Acctype, DOB, account_id) VALUES("'+name+'", "'+Acctype+'", '+dob+', '+account_id+')'
+        addintobank='INSERT INTO Bank_Data.CreatingAcc(name, Acctype, DOB, account_id) VALUES("'+name+'", "'+Acctype+'", '+dob+', '+account_id+')'
         cursor.execute(addintobank)
         conn.commit()
 create_account()
