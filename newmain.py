@@ -22,54 +22,88 @@ def create_account():
             pinnum=int(input("Enter pin number(4 Digit): "))
             pinnum2=int(input("Enter pin again: "))
             if(pinnum==pinnum2):
-              Accountcreate==False
+                Accountcreate==False
             elif(pinnum!=pinnum2):
                 pinnum2=int(input("PIN does not match, try again"))
             else:
                 print("Invalid account type")
                 create_account()
-            
-        addintobank='INSERT INTO Bank_Data.CreatingAcc(name, Acctype, DOB, account_id) VALUES("'+name+'", "'+Acctype+'", '+dob+', '+account_id+')'
-        cursor.execute(addintobank)
-        conn.commit()
-create_account()
-def deposit(account_id, amount):
-    account_id=int(input("Enter account ID:"))
-    amount=int(input("Enter amount number:"))
-    cursor.execute(account_id, amount)
-    print("Deposit amount:"+amount+"into account ID"+account_id)
+                
+            addintobank='INSERT INTO Bank_Data.CreatingAcc(name, Acctype, DOB, account_id) VALUES("'+name+'", "'+Acctype+'", '+dob+', '+account_id+')'
+            cursor.execute(addintobank)
+            conn.commit()
+create_account()   
+
+def account_exists(account_id):
+    print("ACCOUNT EXISTS")
+    cursor.reset()
+    cursor.execute("SELECT account_id FROM Bank_Data.CreatingAcc WHERE account_id = %s",(account_id,))
+    result = cursor.fetchone()
+    print(result)
     conn.commit()
-   
-def withdraw(account_id, amount):
-    cursor.execute('SELECT balance FROM account WHERE id = %s', (account_id,))
-    current_balance = cursor.fetchone()[0]
-    amount=int(input("Emter amount you want to withdraw:"))
-    if current_balance < amount:
-        print(f"Error: Insufficient balance for account ID {account_id}.")
-        return
-    new_balance = current_balance - amount
-    cursor.execute('UPDATE accounts SET balance = %s WHERE id = %s', (new_balance, account_id))
-    print(f"Withdrew {amount} from account ID {account_id}. New balance is {new_balance}.")
-    conn.commit()
+    return result is not None
     
-def check_balance(account_id):
-    account_id=int(input("Enter account id:"))
-    cursor.execute('SELECT balance FROM accounts WHERE id = %s', (account_id,))
-    result_set = cursor._rows
-    if result_set:
-        balance = result_set[0][0]
-        print(f"Balance for account ID {account_id}: {balance}")
+def deposit_amount():
+    print("DEPOSIT AMOUNT")
+    cursor.reset()
+    account_id=int(input("Enter account ID:"))
+    if(account_exists(account_id)):
+     amount=int(input("Enter amount number:"))
+     cursor.execute(f"SELECT account_id FROM Bank_Data.CreatingAcc WHERE account_id = {account_id}")
+     cursor.reset()
+     cursor.execute (f"UPDATE Bank_Data.CreatingAcc SET amount={amount} WHERE account_id={amount}")
+     print("Deposit amount:"+str(amount)+"into account ID"+str(account_id))
     else:
-        print(f"No account found with ID {account_id}.")
-        conn.commit()
-
+        print("Account not found, try agian")
+        deposit_amount()
+    conn.commit()
+deposit_amount()
+def withdraw_amount():
+       cursor.reset()
+       print("WITH DRAW AMOUNT")
+       userwithdraw=input("Would you like to withdraw?")
+       if userwithdraw=="yes":
+           account_id=(input("Enter account id"))
+           amount=int(input("Emter amount you want to withdraw:"))
+           cursor.execute (f'SELECT amount FROM Bank_Data.CreatingAcc WHERE account_id ={account_id}')
+           current=0
+           for num in cursor:
+               for each in num:
+                 each=current
+                 if current < amount and amount<0:
+                  print(f"Error: Insufficient amount for account_id {account_id}.")
+                  return
+                 else:
+                  new_balance = current - amount
+                  cursor.execute(f'UPDATE CreatingAcc SET amount = {new_balance} WHERE account_id ={account_id}')
+                  print(f"Withdrew {amount} from account_id {account_id}. New balance is {new_balance}.")
+           conn.commit()
+withdraw_amount()
+        
+def check_balance():
+        print("PRINT OUT THE BALANCE")
+        cursor.reset()
+        account_id=int(input("Enter account id:"))
+        cursor.execute(f'SELECT amount FROM Bank_Data.CreatingAcc WHERE account_id ={account_id}')
+        result_set = cursor.fetchall()
+        if result_set:
+            balance= result_set[0][0]
+            print(f"amount for account_id {account_id}: {balance}")
+        else:
+            print(f"No account found with account_id {account_id}.")
+            conn.commit()
+check_balance()
 def delete_data():
-    account_id=cursor.fetchall()
-    for i in account_id:
-        if account_id.count(i)>1:
-            for j in range(account_id.count(i)-1):
-               account_id.remove(i) 
-    cursor.execute(f'DELETE Bank_system.CreatingAcc FROM account_id WHERE id = %s', (account_id,))
-
-            
-                   
+    print("DELETE ACCCOUNT")
+    cursor.reset()
+    account_id = int(input("Enter account id: "))
+    cursor.execute(f"SELECT amount FROM Bank_Data.CreatingAcc WHERE account_id = {account_id}")
+    result = cursor.fetchone()
+    if result is None:
+        print("Account not found.")
+    else:
+        cursor.execute(f"DELETE FROM Bank_Data.CreatingAcc WHERE account_id = {account_id}")
+        conn.commit()
+        print(f"Account {account_id} deleted.")
+delete_data()          
+                    
