@@ -48,7 +48,7 @@ def user_selection():
             Bank_functions.deposit_amount(account_id, amount)
         elif(user_accountexists_choice == 2):
             amount = int(input("Enter amount you want to withdraw: "))
-            Bank_functions.withdraw(account_id, amount)
+            Bank_functions.withdraw_amount(account_id, amount)
         elif(user_accountexists_choice==3):
             Bank_functions.check_balance(account_id)
         elif(user_accountexists_choice==4):
