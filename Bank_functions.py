@@ -29,7 +29,7 @@ def withdraw_amount(account_id, amount):
     cursor.reset()
     cursor.execute(f"SELECT amount FROM Bank_Data.CreatingAcc WHERE account_id = {account_id}")
     current_balance = cursor.fetchone()[0]
-    if amount > current_balance or amount < 0:
+    if amount < current_balance or amount < 0:
         print(f"Error: Insufficient balance for account_id {account_id}.")
     else:
         new_balance = current_balance - amount
