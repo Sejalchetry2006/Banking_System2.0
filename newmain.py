@@ -1,6 +1,6 @@
 import mysql.connector
 import random
-##from Bank_functions import BankFunctions
+import Bank_functions
 conn= mysql.connector.connect(user = "root", database = "Bank_Data", password = "Hello1234")
 cursor=conn.cursor()
 def create_account():
@@ -59,26 +59,28 @@ def deposit_amount():
     conn.commit()
 deposit_amount()
 def withdraw_amount():
-       cursor.reset()
-       print("WITH DRAW AMOUNT")
-       userwithdraw=input("Would you like to withdraw?")
-       if userwithdraw=="yes":
-           account_id=(input("Enter account id"))
-           amount=int(input("Emter amount you want to withdraw:"))
-           cursor.execute (f'SELECT amount FROM Bank_Data.CreatingAcc WHERE account_id ={account_id}')
-           current=0
-           for num in cursor:
-               for each in num:
-                 each=current
-                 if current < amount and amount<0:
-                  print(f"Error: Insufficient amount for account_id {account_id}.")
-                  return
-                 else:
-                  new_balance = current - amount
-                  cursor.execute(f'UPDATE CreatingAcc SET amount = {new_balance} WHERE account_id ={account_id}')
-                  print(f"Withdrew {amount} from account_id {account_id}. New balance is {new_balance}.")
-           conn.commit()
+    cursor.reset()
+    print("WITH DRAW AMOUNT")
+    userwithdraw = input("Would you like to withdraw?")
+    if userwithdraw == "yes":
+        account_id = input("Enter account id: ")
+        amount = int(input("Enter amount you want to withdraw: "))
+        cursor.execute(f'SELECT amount FROM Bank_Data.CreatingAcc WHERE account_id = {account_id}')
+        row = cursor.fetchone()
+        if row is None:
+            print(f"Error: Account with id {account_id} not found.")
+            return
+        current = row[0]
+        if current is None or current < amount or amount < 0:
+            print(f"Error: Insufficient amount for account_id {account_id}.")
+            return
+        else:
+            new_balance = current - amount
+            cursor.execute(f'UPDATE CreatingAcc SET amount = {new_balance} WHERE account_id = {account_id}')
+            print(f"Withdrew {amount} from account_id {account_id}. New balance is {new_balance}.")
+        conn.commit()
 withdraw_amount()
+
         
 def check_balance():
         print("PRINT OUT THE BALANCE")
